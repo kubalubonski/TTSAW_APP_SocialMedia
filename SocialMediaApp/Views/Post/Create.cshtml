@@ -1,0 +1,19 @@
+@model SocialMediaApp.Models.PostCreateDto
+
+<div class="container">
+    <h1>Create a New Post</h1>
+
+    <form asp-action="CreatePost" method="post">
+        <div class="mb-3">
+            <label for="Title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="Title" name="Title" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="Content" class="form-label">Content</label>
+            <textarea class="form-control" id="Content" name="Content" rows="3" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Post</button>
+    </form>
+</div>

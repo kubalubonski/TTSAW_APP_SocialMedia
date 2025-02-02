@@ -1,0 +1,91 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (IdentityApi)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build IdentityApi",
+            "program": "${workspaceFolder}/IdentityApi/bin/Debug/net8.0/IdentityApi.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/IdentityApi",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/IdentityApi/Views"
+            }
+        },
+        {
+            "name": ".NET Core Launch (PostApi)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build PostApi",
+            "program": "${workspaceFolder}/PostApi/bin/Debug/net8.0/PostApi.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/PostApi",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/PostApi/Views"
+            }
+        },
+        {
+            "name": ".NET Core Launch (PeopleApi)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build PeopleApi",
+            "program": "${workspaceFolder}/PeopleApi/bin/Debug/net8.0/PeopleApi.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/PeopleApi",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/PeopleApi/Views"
+            }
+        },
+        {
+            "name": ".NET Core Launch (Frontend)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build Frontend",
+            "program": "${workspaceFolder}/SocialMediaApp/bin/Debug/net8.0/SocialMediaApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/SocialMediaApp",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/SocialMediaApp/Views"
+            }
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+
+    ]
+}

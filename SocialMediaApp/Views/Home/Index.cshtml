@@ -1,0 +1,25 @@
+﻿@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container text-center mt-5">
+    <h1 class="display-4">Welcome to Social Media App</h1>
+    <p class="lead">Connect with friends, share your thoughts, and explore new content.</p>
+
+    <div class="mt-4">
+        @if (HttpContextAccessor.HttpContext.Session.GetString("JwtToken") != null)
+        {
+            <a href="/Post/Index" class="btn btn-primary btn-lg mx-2">View Posts</a>
+            <a href="/People/Index" class="btn btn-success btn-lg mx-2">Find People</a>
+            <a href="/People/Friends" class="btn btn-info btn-lg mx-2">Friends</a>
+            <a href="/Account/Logout" class="btn btn-danger btn-lg mx-2">Logout</a>
+        }
+        else
+        {
+            <a href="/Account/Login" class="btn btn-outline-primary btn-lg mx-2">Login</a>
+            <a href="/Account/Register" class="btn btn-outline-success btn-lg mx-2">Register</a>
+        }
+    </div>
+</div>

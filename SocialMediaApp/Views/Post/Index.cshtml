@@ -1,0 +1,30 @@
+@model List<SocialMediaApp.Models.PostDto>
+
+<div class="container">
+    <h1>Latest Posts</h1>
+
+    <div class="btn-group mb-3">
+        <a href="@Url.Action("Index", "Post", new { filter = "all" })" class="btn btn-primary">All Posts</a>
+        <a href="@Url.Action("Index", "Post", new { filter = "friends" })" class="btn btn-success">Friends' Posts</a>
+        <a href="@Url.Action("MyPosts", "Post")" class="btn btn-secondary">My Posts</a>
+        <a href="@Url.Action("Create", "Post")" class="btn btn-primary mb-3">Create New Post</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <ul class="list-group">
+            @foreach (var post in Model)
+            {
+                <li class="list-group-item">
+                    <h5>@post.Title</h5>
+                    <p>@post.Content</p>
+                    <small>@post.CreatedAt.ToString("yyyy-MM-dd HH:mm")</small>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No posts available.</p>
+    }
+</div>

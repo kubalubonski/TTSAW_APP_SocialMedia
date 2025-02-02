@@ -1,0 +1,41 @@
+@model List<SocialMediaApp.Models.UserDto>
+
+<div class="container">
+    <h1>Your Friends</h1>
+
+    @if (Model != null && Model.Any())
+    {
+        <ul class="list-group">
+            @foreach (var friend in Model)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>@friend.Username</span>
+                    <form asp-action="RemoveFriend" method="post" class="remove-friend-form">
+                        <input type="hidden" name="friendId" value="@friend.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>You have no friends added yet.</p>
+    }
+</div>
+
+<script>
+    document.querySelectorAll('.remove-friend-form').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            let button = this.querySelector('button');
+            button.innerText = "Removed";
+            button.classList.remove('btn-danger');
+            button.classList.add('btn-secondary');
+            button.disabled = true;
+
+            this.submit();
+        });
+    });
+</script>
