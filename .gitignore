@@ -1,0 +1,18 @@
+bin/
+obj/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+
+# IDE folders
+.vs/
+.vscode/*.user
+
+# Logs and local tooling output
+*.log
+
+# OS files
+Thumbs.db
+Desktop.ini

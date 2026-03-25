@@ -18,11 +18,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddAutoMapper(typeof(PeopleProfile));
 
-var activeConnection = builder.Configuration.GetConnectionString(
-    builder.Configuration["ConnectionStrings:ActiveConnection"]
-);
+var activeConnection = ResolveConnectionString(builder.Configuration, builder.Environment);
 builder.Services.AddDbContext<PeopleApiDbContext>(options =>
-        options.UseSqlServer(activeConnection));
+    options.UseSqlServer(activeConnection, sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -72,6 +70,8 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+await MigrateDatabaseAsync<PeopleApiDbContext>(app.Services, app.Logger);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -87,3 +87,42 @@ app.UseHttpsRedirection();
 
 
 app.Run();
+
+static string ResolveConnectionString(IConfiguration configuration, IHostEnvironment environment)
+{
+    var connectionName = environment.IsDevelopment()
+        ? "DefaultConnection"
+        : "DockerConnection";
+
+    return configuration.GetConnectionString(connectionName)
+        ?? throw new InvalidOperationException($"Missing connection string '{connectionName}'.");
+}
+
+static async Task MigrateDatabaseAsync<TContext>(IServiceProvider services, ILogger logger)
+    where TContext : DbContext
+{
+    const int maxAttempts = 10;
+
+    for (var attempt = 1; attempt <= maxAttempts; attempt++)
+    {
+        try
+        {
+            using var scope = services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
+            await dbContext.Database.MigrateAsync();
+            logger.LogInformation("Applied migrations for {DbContext}.", typeof(TContext).Name);
+            return;
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Migration attempt {Attempt}/{MaxAttempts} failed for {DbContext}.", attempt, maxAttempts, typeof(TContext).Name);
+
+            if (attempt == maxAttempts)
+            {
+                throw;
+            }
+
+            await Task.Delay(TimeSpan.FromSeconds(5));
+        }
+    }
+}
