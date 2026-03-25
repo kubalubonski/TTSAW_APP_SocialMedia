@@ -72,6 +72,12 @@ Database:
 
 ## Running the Project
 
+### Configuration
+
+1. Copy `.env.example` to `.env`
+2. Fill in your local values in `.env`
+3. Use the same `.env` file for both Docker and local startup
+
 ### Recommended: Full Docker setup
 
 This is the easiest way to run the whole application and the recommended option for reviewing the project.
@@ -79,6 +85,7 @@ This is the easiest way to run the whole application and the recommended option 
 Run the full stack with Docker:
 
 ```powershell
+Copy-Item .env.example .env
 docker compose up --build
 ```
 
@@ -91,22 +98,28 @@ Docker ports:
 
 ### Option 2: Local APIs + SQL Server in Docker
 
-1. Start SQL Server:
+1. Prepare local config:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+2. Start SQL Server:
 
 ```powershell
 docker compose up -d mssql
 ```
 
-2. Start the APIs and frontend from the repository root:
+3. Start all APIs and the frontend from the repository root:
 
 ```powershell
-dotnet watch run --project .\IdentityApi\IdentityApi.csproj
-dotnet watch run --project .\PeopleApi\PeopleApi.csproj
-dotnet watch run --project .\PostApi\PostApi.csproj
-dotnet watch run --project .\SocialMediaApp\SocialMediaApp.csproj
+Set-ExecutionPolicy -Scope Process Bypass
+.\scripts\Start-Local.ps1
 ```
 
-3. Open the frontend:
+If PowerShell blocks script execution on Windows, use the command above in the same terminal session. The `Process` scope changes the policy only for the current PowerShell window.
+
+4. Open the frontend:
 
 ```text
 http://localhost:5065
@@ -137,5 +150,13 @@ TTSAW_APP_SocialMedia.sln
 - handling authentication and authorization with JWT
 - working with EF Core migrations and SQL Server
 - building a complete end-to-end application
+ - keeping secrets out of the repository while preserving a simple startup flow
+
+## Local Secret Setup
+
+- `.env.example` contains the required keys and example values
+- `.env` is ignored by Git and should contain your real local values
+- Docker reads `.env` during `docker compose up`
+- local startup reads `.env` through `scripts/Start-Local.ps1`
 
 

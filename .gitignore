@@ -12,6 +12,8 @@ obj/
 
 # Logs and local tooling output
 *.log
+.env
+!.env.example
 
 # OS files
 Thumbs.db

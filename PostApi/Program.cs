@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PostApi.Configuration;
 using PostApi.Data;
 using PostApi.Dtos;
 using PostApi.Models;
@@ -10,7 +11,7 @@ using PostApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var activeConnection = ResolveConnectionString(builder.Configuration, builder.Environment);
+var activeConnection = StartupSupport.ResolveConnectionString(builder.Configuration, builder.Environment);
 builder.Services.AddDbContext<PostApiDbContext>(options =>
     options.UseSqlServer(activeConnection, sqlOptions => sqlOptions.EnableRetryOnFailure()));
 builder.Services.AddDbContext<FriendshipDbContext>(options =>
@@ -31,9 +32,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
+            ValidIssuer = StartupSupport.GetRequiredSetting(builder.Configuration, "Jwt:Issuer"),
+            ValidAudience = StartupSupport.GetRequiredSetting(builder.Configuration, "Jwt:Audience"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(StartupSupport.GetRequiredSetting(builder.Configuration, "Jwt:SecretKey")))
         };
     });
 
@@ -70,7 +71,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-await MigrateDatabaseAsync<PostApiDbContext>(app.Services, app.Logger);
+await StartupSupport.MigrateDatabaseAsync<PostApiDbContext>(app.Services, app.Logger);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -87,43 +88,4 @@ app.MapControllers();
 
 
 app.Run();
-
-static string ResolveConnectionString(IConfiguration configuration, IHostEnvironment environment)
-{
-    var connectionName = environment.IsDevelopment()
-        ? "DefaultConnection"
-        : "DockerConnection";
-
-    return configuration.GetConnectionString(connectionName)
-        ?? throw new InvalidOperationException($"Missing connection string '{connectionName}'.");
-}
-
-static async Task MigrateDatabaseAsync<TContext>(IServiceProvider services, ILogger logger)
-    where TContext : DbContext
-{
-    const int maxAttempts = 10;
-
-    for (var attempt = 1; attempt <= maxAttempts; attempt++)
-    {
-        try
-        {
-            using var scope = services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
-            await dbContext.Database.MigrateAsync();
-            logger.LogInformation("Applied migrations for {DbContext}.", typeof(TContext).Name);
-            return;
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Migration attempt {Attempt}/{MaxAttempts} failed for {DbContext}.", attempt, maxAttempts, typeof(TContext).Name);
-
-            if (attempt == maxAttempts)
-            {
-                throw;
-            }
-
-            await Task.Delay(TimeSpan.FromSeconds(5));
-        }
-    }
-}
 
