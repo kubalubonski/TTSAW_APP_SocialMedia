@@ -72,7 +72,24 @@ Database:
 
 ## Running the Project
 
-### Option 1: Local APIs + SQL Server in Docker
+### Recommended: Full Docker setup
+
+This is the easiest way to run the whole application and the recommended option for reviewing the project.
+
+Run the full stack with Docker:
+
+```powershell
+docker compose up --build
+```
+
+Docker ports:
+
+- PeopleApi: `http://localhost:5001`
+- Frontend: `http://localhost:5002`
+- IdentityApi: `http://localhost:5003`
+- PostApi: `http://localhost:5004`
+
+### Option 2: Local APIs + SQL Server in Docker
 
 1. Start SQL Server:
 
@@ -101,21 +118,6 @@ Local development ports:
 - PeopleApi: `http://localhost:5096`
 - PostApi: `http://localhost:5035`
 - Frontend: `http://localhost:5065`
-
-### Option 2: Full Docker setup
-
-Run the whole stack with Docker:
-
-```powershell
-docker compose up --build
-```
-
-Docker ports:
-
-- PeopleApi: `http://localhost:5001`
-- Frontend: `http://localhost:5002`
-- IdentityApi: `http://localhost:5003`
-- PostApi: `http://localhost:5004`
 
 ## Repository Structure
 
